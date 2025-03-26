@@ -11,7 +11,6 @@ class MYSQLRepository {
         $this->pdo = $pdo;
     }
 
-    // GET /tasks – Get all tasks
     public function getAllTasks() {
         $query = "SELECT id, title, description, status FROM tasks";
         $stmt = $this->pdo->query($query);
@@ -28,7 +27,6 @@ class MYSQLRepository {
         return $tasks;
     }
 
-    // GET /tasks/{id} – Get a specific task by id
     public function getTaskById(int $id) {
         $query = "SELECT id, title, description, status FROM tasks WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -47,7 +45,6 @@ class MYSQLRepository {
         return null; // Task not found
     }
 
-    // POST /tasks – Create a new task
     public function createTask(string $title, string $description = '', TaskStatus $status) {
         $query = "INSERT INTO tasks (title, description, status) VALUES (:title, :description, :status)";
         $stmt = $this->pdo->prepare($query);
@@ -61,7 +58,6 @@ class MYSQLRepository {
         return $this->getTaskById((int)$id);
     }
 
-    // PUT /tasks/{id} – Update an existing task
     public function updateTask(int $id, string $title, string $description = '', TaskStatus $status) {
         $query = "UPDATE tasks SET title = :title, description = :description, status = :status WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -74,8 +70,7 @@ class MYSQLRepository {
 
         return $this->getTaskById($id); // Return updated task
     }
-
-    // DELETE /tasks/{id} – Delete a task by id
+    
     public function deleteTask(int $id) {
         $query = "DELETE FROM tasks WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
