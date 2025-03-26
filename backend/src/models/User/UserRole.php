@@ -21,4 +21,3 @@ enum UserRole: int {
         };
     }
 }
-?>

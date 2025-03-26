@@ -26,6 +26,7 @@ services:
       DB_PORT: 3306
       DB_USERNAME: root
       DB_PASSWORD: examplepassword
+      JWT_SIGN_KEY: "what-does-the-fox-say?"
       IS_DEV: 'true'  # Or 'false' based on your environment
     depends_on:
       - mysql

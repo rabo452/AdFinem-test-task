@@ -2,8 +2,8 @@
 
 enum TaskStatus: string
 {
-    case OPEN = 'open';
     case PENDING = 'pending';
+    case IN_PROGRESS = 'in_progress';
     case FINISHED = 'finished';
 
     // Method to convert a string to the corresponding TaskStatus
@@ -11,8 +11,8 @@ enum TaskStatus: string
     {
         $status = strtolower($status);
         return match ($status) {
-            'open' => self::OPEN,
             'pending' => self::PENDING,
+            'in_progress' => self::IN_PROGRESS,
             'finished' => self::FINISHED,
             default => throw new InvalidArgumentException("Invalid status: $status"),
         };
