@@ -1,0 +1,12 @@
+-- init.sql
+
+CREATE DATABASE IF NOT EXISTS task;
+
+USE task;
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(40) NOT NULL,
+    description VARCHAR(255),
+    status INT NOT NULL
+);

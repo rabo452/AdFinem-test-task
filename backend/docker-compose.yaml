@@ -1,4 +1,18 @@
 services:
+  mysql:
+    build:
+      context: ./mysql  # Path to your custom MySQL Dockerfile
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: examplepassword
+      MYSQL_DATABASE: task  # This is where the task database will be created
+    volumes:
+      - mysql_data:/var/lib/mysql  # Persist MySQL data
+    networks:
+      - app-network
+    ports:
+      - "3306:3306"
+
   php-fpm:
     build:
       context: ./php-fpm
@@ -7,6 +21,14 @@ services:
       - ./src:/var/www/html
     networks:
       - app-network
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: examplepassword
+      IS_DEV: 'true'  # Or 'false' based on your environment
+    depends_on:
+      - mysql
 
   nginx:
     build:
@@ -22,3 +44,6 @@ services:
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  mysql_data:
