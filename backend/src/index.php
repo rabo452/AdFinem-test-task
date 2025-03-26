@@ -4,9 +4,10 @@ define('BASE_DIR', __DIR__ . '/');
 
 require_once BASE_DIR . 'config.php';
 require_once BASE_DIR . 'controllers/task/TaskController.php';
+require_once BASE_DIR . 'controllers/auth/AuthController.php';
 
 $path = $_SERVER['REQUEST_URI'];
-$controllers = [TaskController::class];
+$controllers = [TaskController::class, AuthController::class];
 
 try {
     $isControllerFound = false;

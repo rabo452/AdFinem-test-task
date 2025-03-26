@@ -1,6 +1,6 @@
 <?php
 
-require_once BASE_DIR . 'models/TaskStatus.php';
+require_once BASE_DIR . 'models/Task/TaskStatus.php';
 
 class Task {
     private string $title;

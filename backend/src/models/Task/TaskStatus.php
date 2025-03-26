@@ -9,6 +9,7 @@ enum TaskStatus: string
     // Method to convert a string to the corresponding TaskStatus
     public static function fromString(string $status): TaskStatus
     {
+        $status = strtolower($status);
         return match ($status) {
             'open' => self::OPEN,
             'pending' => self::PENDING,

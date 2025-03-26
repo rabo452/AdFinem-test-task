@@ -29,8 +29,12 @@ CREATE TABLE IF NOT EXISTS tasks (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- Insert initial roles (admin and participant)
-INSERT INTO roles (title) VALUES ('admin'), ('participant');
+-- Insert roles explicitly with ids (1 for 'admin', 2 for 'participant')
+INSERT INTO roles (id, title) VALUES
+    (1, 'admin'),
+    (2, 'participant');
 
-INSERT INTO users (username, password, role_id) 
-VALUES ('admin', SHA2('admin', 256), (SELECT id FROM roles WHERE title = 'admin' LIMIT 1));
+-- Insert initial admin user
+INSERT INTO users (username, password, role_id)
+VALUES 
+    ('admin', SHA2('admin', 256), 1);  -- 1 refers to 'admin' role

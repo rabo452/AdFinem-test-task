@@ -1,7 +1,7 @@
 <?php
 
-require_once BASE_DIR . 'models/Task.php';
-require_once BASE_DIR . 'models/TaskStatus.php';
+require_once BASE_DIR . 'models/Task/Task.php';
+require_once BASE_DIR . 'models/Task/TaskStatus.php';
 
 class MYSQLRepository {
     private $pdo;
@@ -70,7 +70,7 @@ class MYSQLRepository {
 
         return $this->getTaskById($id); // Return updated task
     }
-    
+
     public function deleteTask(int $id) {
         $query = "DELETE FROM tasks WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
