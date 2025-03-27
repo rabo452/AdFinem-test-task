@@ -1,5 +1,6 @@
 <?php
 
+// set the base directory for absolute imports
 define('BASE_DIR', __DIR__ . '/');
 
 require_once BASE_DIR . 'Config.php';
@@ -26,8 +27,10 @@ try {
         die("Page not found.");
     }
 } catch(Exception $e) {
+    // in development show the error
     if ((new Config())->isDev()) {
         throw $e;
     }
+    // the nginx will give the error html page to the user
     http_response_code(500);
 }

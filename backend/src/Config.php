@@ -1,7 +1,8 @@
 <?php 
 
+// Config class handles the loading of configuration settings from environment variables
 class Config {
-    // Define configuration properties
+    // Define private configuration properties for database connection and JWT signing key
     private string $dbHost;
     private string $dbPort;
     private string $dbUsername;
@@ -9,44 +10,45 @@ class Config {
     private string $jwtSignKey;
     private bool $isDev;
 
-    // Constructor to initialize the properties
+    // Constructor to initialize configuration properties from environment variables
     public function __construct() {
-        // Fetch environment variables and initialize properties
-        $this->dbHost = getenv('DB_HOST') ?: ''; // Default to localhost if not set
-        $this->dbPort = getenv('DB_PORT') ?: ''; // Default to MySQL default port if not set
-        $this->dbUsername = getenv('DB_USERNAME') ?: ''; // You might want to set a default or handle it better
-        $this->dbPassword = getenv('DB_PASSWORD') ?: ''; // Same for password
-        $this->jwtSignKey = getenv('JWT_SIGN_KEY') ?: '12345'; // Default to empty if not provided
-        $this->isDev = (getenv('IS_DEV') ?: 'true') === 'true'; // Default to true if not set
+        // Fetch environment variables and initialize the class properties
+        // Default to empty string or specific fallback values if not set
+        $this->dbHost = getenv('DB_HOST') ?: ''; // Fetch database host or default to an empty string
+        $this->dbPort = getenv('DB_PORT') ?: ''; // Fetch database port or default to an empty string
+        $this->dbUsername = getenv('DB_USERNAME') ?: ''; // Fetch database username or default to an empty string
+        $this->dbPassword = getenv('DB_PASSWORD') ?: ''; // Fetch database password or default to an empty string
+        $this->jwtSignKey = getenv('JWT_SIGN_KEY') ?: '12345'; // Fetch JWT sign key or use a default fallback value
+        $this->isDev = (getenv('IS_DEV') ?: 'true') === 'true'; // Check if the environment is set to 'dev' or default to 'true'
     }
 
-    // Getter for DB Host
+    // Getter method for database host
     public function getDbHost(): string {
-        return $this->dbHost;
+        return $this->dbHost; // Return the database host configuration value
     }
 
-    // Getter for DB Port
+    // Getter method for database port
     public function getDbPort(): string {
-        return $this->dbPort;
+        return $this->dbPort; // Return the database port configuration value
     }
 
-    // Getter for DB Username
+    // Getter method for database username
     public function getDbUsername(): string {
-        return $this->dbUsername;
+        return $this->dbUsername; // Return the database username configuration value
     }
 
-    // Getter for DB Password
+    // Getter method for database password
     public function getDbPassword(): string {
-        return $this->dbPassword;
+        return $this->dbPassword; // Return the database password configuration value
     }
 
-    // Getter for JWT Sign Key
+    // Getter method for JWT sign key
     public function getJwtSignKey(): string {
-        return $this->jwtSignKey;
+        return $this->jwtSignKey; // Return the JWT sign key configuration value
     }
 
-    // Getter for environment (development or production)
+    // Getter method to check if the environment is set to development
     public function isDev(): bool {
-        return $this->isDev;
+        return $this->isDev; // Return whether the application is running in development mode
     }
 }

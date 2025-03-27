@@ -1,5 +1,6 @@
 <?php 
 
+// Including necessary files for the controller's dependencies
 require_once BASE_DIR . 'controllers/BaseController.php';
 require_once BASE_DIR . 'models/User/UserRole.php';
 require_once BASE_DIR . 'repositories/MYSQLRepository.php';
@@ -8,112 +9,121 @@ require_once BASE_DIR . 'services/UserService/UserService.php';
 require_once BASE_DIR . 'PDO_CONNECTION.php';
 require_once BASE_DIR . 'Config.php';
 
+// AuthController handles user authentication operations such as login and registration
 class AuthController extends BaseController {
+    // Define the prefix used for routing (e.g., "auth")
     protected static string $prefix = "auth";
 
-    // Define the mapping of paths to method names
+    // Mapping of path names to methods in the controller
     protected static array $actions = [
-        'sign-up' => 'signUp',
-        'login' => 'logIn',
+        'sign-up' => 'signUp',  // sign-up path is mapped to the signUp method
+        'login' => 'logIn',     // login path is mapped to the logIn method
     ];
 
-    // Validate username and password
+    // Method to validate the username and password input
     private static function validateCredentials(string $username, string $password): void {
-        // Validate username length
+        // Validate that the username length is between 8 and 40 characters
         if (strlen($username) < 8 || strlen($username) > 40) {
             self::sendJsonResponse(['message' => 'Username must be between 8 and 40 characters.'], 400);
         }
 
-        // Validate password length (similar to username length check)
+        // Validate that the password length is between 8 and 40 characters
         if (strlen($password) < 8 || strlen($password) > 40) {
             self::sendJsonResponse(['message' => 'Password must be between 8 and 40 characters.'], 400);
         }
 
-        // Check if the username is alphanumeric (if needed for validation)
+        // Validate that the username contains only alphanumeric characters
         if (!ctype_alnum($username)) {
             self::sendJsonResponse(['message' => 'Username must only contain letters and numbers.'], 400);
         }
 
-        // Check if the password is alphanumeric (if needed for validation)
+        // Validate that the password contains only alphanumeric characters
         if (!ctype_alnum($password)) {
             self::sendJsonResponse(['message' => 'Password must only contain letters and numbers.'], 400);
         }
     }
 
-    // Sign-up method
+    // Method to handle user registration (sign-up)
     protected static function signUp(): void {
-        // Check if the request method is POST
+        // Ensure that the request method is POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             self::sendJsonResponse(['message' => 'Please submit the registration form.'], 405);
-        } 
+        }
 
-        // Get the POST data for username and password
+        // Retrieve the username and password from the POST request data
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Validate the username and password
+        // Validate the credentials (username and password)
         self::validateCredentials($username, $password);
 
-        // Set a default role (e.g., participant) when creating a user
+        // Set a default role for the new user (e.g., participant)
         $defaultRole = UserRole::PARTICIPANT;
 
+        // Establish a PDO connection and instantiate necessary services and repository
         $pdo = (new PDO_CONNECTION())->getPDO();
         $repository = new MYSQLRepository($pdo);
         $userService = new UserService($repository);
         $user = null;
 
+        // Attempt to create a new user and handle potential exceptions
         try {
             $user = $userService->createUser($username, $password, $defaultRole);
         } catch(Exception $e) {
+            // If the user already exists, return an error message
             self::sendJsonResponse(['message' => "User [$username] already exists!"], 409);
         }
 
-        // Create JWT token for the user
+        // Create a JWT token for the newly created user with a 1-hour expiration
         $payload = ['user_id' => $user->getId()];
         $jwtSignKey = (new Config())->getJwtSignKey();
-        $jwtDuration = 60 * 60; // one hour
+        $jwtDuration = 60 * 60; // one hour duration
         $jwt = JWTService::createJWT($jwtSignKey, $jwtDuration, $payload);
 
-        // Respond with the JWT
+        // Respond with the generated JWT
         self::sendJsonResponse(['jwt' => $jwt], 201);
     }
 
-    // Login method
+    // Method to handle user login (log-in)
     protected static function logIn(): void {
-        // Check if the request method is POST
+        // Ensure that the request method is POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             self::sendJsonResponse(['message' => 'Please submit the login form.'], 405);
         }
 
-        // Get the POST data for username and password
+        // Retrieve the username and password from the POST request data
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Validate the username and password
+        // Validate the credentials (username and password)
         self::validateCredentials($username, $password);
 
+        // Establish a PDO connection and instantiate necessary services and repository
         $pdo = (new PDO_CONNECTION())->getPDO();
         $repository = new MYSQLRepository($pdo);
         $userService = new UserService($repository);
         $user = null;
 
+        // Attempt to fetch the user from the database using the provided credentials
         try {
             $user = $userService->getUser($username, $password);
         } catch (Exception $e) {
+            // Handle server errors
             self::sendJsonResponse(['message' => 'Server error, please try again later.'], 500);
         }
 
+        // If the user doesn't exist, return an error message
         if (!isset($user)) {
             self::sendJsonResponse(['message' => "User [$username] does not exist!"], 404);
         }
 
-        // Create JWT token for the user
+        // Create a JWT token for the logged-in user with a 1-hour expiration
         $payload = ['user_id' => $user->getId()];
         $jwtSignKey = (new Config())->getJwtSignKey();
-        $jwtDuration = 60 * 60; // one hour
+        $jwtDuration = 60 * 60; // one hour duration
         $jwt = JWTService::createJWT($jwtSignKey, $jwtDuration, $payload);
 
-        // Respond with the JWT
+        // Respond with the generated JWT
         self::sendJsonResponse(['jwt' => $jwt], 200);
     }
 }
