@@ -22,7 +22,7 @@ class TaskService {
     }
 
     // Create a new task
-    public function createTask(string $title, string $description, TaskStatus $status, int $userId): bool {
+    public function createTask(string $title, string $description, TaskStatus $status, int $userId): Task {
         return $this->repository->createTask($title, $description, $status, $userId);
     }
 
@@ -36,12 +36,17 @@ class TaskService {
     }
 
     // Update a task (if user is the owner or an admin)
-    public function updateTask(int $userId, int $taskId, ?string $title, ?string $description, ?TaskStatus $status): bool {
+    public function updateTask(int $userId, int $taskId, ?string $title, ?string $description, ?TaskStatus $status): Task {
         if ($this->repository->isAdmin($userId) || $this->repository->isUserTaskOwner($taskId, $userId)) {
-            return $this->repository->updateTask($taskId, $title, $description, $status);
+            $result = $this->repository->updateTask($taskId, $title, $description, $status);
+            if (!$result) {
+                throw new Exception("unable to update task");
+            }
+
+            return $this->repository->getTaskById($taskId);
         }
 
-        return false;
+        throw new Exception("unable to update task");
     }
 
     // Delete a task (if user is the owner or an admin)

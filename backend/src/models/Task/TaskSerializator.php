@@ -1,6 +1,6 @@
 <?php 
 
-class Serializator {
+class TaskSerializator {
     public static function serialize(Task $task): array {
         // Return an associative array with task properties
         return [

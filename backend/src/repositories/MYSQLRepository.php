@@ -88,7 +88,7 @@ class MYSQLRepository implements TaskServiceRepositoryI, UserServiceRepositoryI 
     }
 
     // Create a task
-    public function createTask(string $title, string $description, TaskStatus $status, int $userId): bool {
+    public function createTask(string $title, string $description, TaskStatus $status, int $userId): Task {
         $query = "INSERT INTO tasks (title, description, status, user_id) VALUES (:title, :description, :status, :user_id)";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':title', $title);
@@ -96,7 +96,10 @@ class MYSQLRepository implements TaskServiceRepositoryI, UserServiceRepositoryI 
         $stmt->bindParam(':status', $status->value);
         $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
 
-        return $stmt->execute();
+        $stmt->execute();
+        $id = $this->pdo->lastInsertId();
+
+        return new Task($id, $title, $description, $status, $userId);
     }
 
     // Update task

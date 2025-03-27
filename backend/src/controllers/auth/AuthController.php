@@ -17,14 +17,6 @@ class AuthController extends BaseController {
         'login' => 'logIn',
     ];
 
-    // Helper method to send a JSON response with status code
-    protected static function sendJsonResponse(array $data, int $statusCode = 200): void {
-        header('Content-Type: application/json');
-        http_response_code($statusCode);
-        echo json_encode($data);
-        exit;
-    }
-
     // Validate username and password
     private static function validateCredentials(string $username, string $password): void {
         // Validate username length

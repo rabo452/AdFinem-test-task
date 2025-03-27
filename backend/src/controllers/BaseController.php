@@ -10,7 +10,7 @@ abstract class BaseController {
     }
 
     public static function deletePrefix(string $path): string {
-        return str_replace('/' . static::$prefix . '/', '', $path);
+        return str_replace(['/' . static::$prefix . '/', '/' . static::$prefix], '', $path);
     }
 
     public static function executePath(string $path) {

@@ -11,7 +11,7 @@ interface TaskServiceRepositoryI {
     public function getTaskById(int $taskId): ?Task;
     public function isUserTaskOwner(int $taskId, int $userId): bool;
     
-    public function createTask(string $title, string $description, TaskStatus $status, int $userId): bool;
+    public function createTask(string $title, string $description, TaskStatus $status, int $userId): Task;
     public function updateTask(int $taskId, ?string $title, ?string $description, ?TaskStatus $status): bool;
     public function deleteTask(int $taskId): bool;
 

@@ -60,6 +60,30 @@ class JWTService {
         return $encodedHeader . '.' . $encodedPayload . '.' . $signature;
     }
 
+    public static function getJWTPayload(string $signKey, string $jwt): array {
+        // Split the JWT into its parts (header, payload, and signature)
+        $parts = explode('.', $jwt);
+    
+        // Ensure the JWT has three parts
+        if (count($parts) !== 3) {
+            return []; // Invalid JWT format
+        }
+    
+        // Extract the payload part (second part)
+        $encodedPayload = $parts[1];
+    
+        // Decode the base64Url-encoded payload
+        $decodedPayload = json_decode(self::base64UrlDecode($encodedPayload), true);
+    
+        // Check if the payload is valid JSON
+        if ($decodedPayload === null) {
+            return []; // Invalid payload
+        }
+    
+        // Return the decoded payload as an associative array
+        return $decodedPayload;
+    }
+
     // Helper method to base64Url encode a string
     private static function base64UrlEncode(string $data): string {
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
