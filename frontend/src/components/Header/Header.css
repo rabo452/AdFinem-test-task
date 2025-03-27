@@ -1,0 +1,42 @@
+/* src/App.css */
+header {
+    background-color: #333;  /* Dark background */
+    color: white;            /* White text */
+    padding: 15px 0;         /* Top and bottom padding */
+    text-align: center;      /* Center the text */
+  }
+  
+  nav ul {
+    list-style-type: none;       /* Remove list dots */
+    margin: 0;                   /* Remove default margin */
+    padding: 0;                  /* Remove default padding */
+    display: flex;               /* Use flexbox for horizontal layout */
+    justify-content: center;     /* Center the items */
+    gap: 20px;                   /* Space between items */
+  }
+  
+  nav ul li {
+    display: inline-block;       /* Display list items inline */
+  }
+  
+  nav ul li a {
+    color: white;                /* White text color */
+    text-decoration: none;       /* Remove underline */
+    font-size: 18px;             /* Set font size */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+  }
+  
+  nav ul li a:hover {
+    color: #4CAF50;              /* Change to green when hovered */
+  }
+  
+  @media (max-width: 768px) {
+    nav ul {
+      flex-direction: column;    /* Stack links vertically on smaller screens */
+    }
+  
+    nav ul li {
+      margin-bottom: 10px;       /* Space out the links vertically */
+    }
+  }
+  

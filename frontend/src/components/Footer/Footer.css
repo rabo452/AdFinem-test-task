@@ -1,0 +1,26 @@
+/* src/App.css */
+footer {
+    background-color: #333;  /* Dark background for footer */
+    color: white;            /* White text */
+    text-align: center;      /* Center the text */
+    padding: 10px 0;         /* Vertical padding */
+    position: fixed;         /* Fixed at the bottom */
+    left: 0;                 /* Align left */
+    bottom: 0;               /* Align bottom */
+    width: 100%;             /* Full width */
+    font-size: 14px;         /* Smaller text */
+  }
+  
+  footer p {
+    margin: 0;               /* Remove default margin */
+  }
+  
+  footer a {
+    color: #4CAF50;          /* Green color for any links */
+    text-decoration: none;   /* Remove underline */
+  }
+  
+  footer a:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+  
