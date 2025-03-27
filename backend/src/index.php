@@ -2,9 +2,10 @@
 
 define('BASE_DIR', __DIR__ . '/');
 
-require_once BASE_DIR . 'config.php';
+require_once BASE_DIR . 'Config.php';
 require_once BASE_DIR . 'controllers/task/TaskController.php';
 require_once BASE_DIR . 'controllers/auth/AuthController.php';
+require_once BASE_DIR . 'models/Task/TaskStatus.php';
 
 $path = $_SERVER['REQUEST_URI'];
 $controllers = [TaskController::class, AuthController::class];
@@ -14,6 +15,7 @@ try {
 
     foreach ($controllers as $controller) {
         if ($controller::doesPathMatch($path)) {
+            $path = $controller::deletePrefix($path);
             $controller::executePath($path);
             $isControllerFound = true;
             break;

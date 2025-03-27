@@ -1,8 +1,8 @@
 <?php
 
 class JWTService {
-    
-    // Validate the JWT and check if it's correctly signed
+
+    // Validate the JWT and check if it's correctly signed and not expired
     public static function isValidJWT(string $signKey, string $jwt): bool {
         // Split JWT into three parts
         $parts = explode('.', $jwt);
@@ -24,6 +24,11 @@ class JWTService {
             return false;
         }
 
+        // Check if the token is expired
+        if (isset($decodedPayload['exp']) && time() >= $decodedPayload['exp']) {
+            return false; // Token is expired
+        }
+
         // Recreate the signature by re-signing the header and payload with the same key
         $recreatedSignature = self::createSignature($encodedHeader, $encodedPayload, $signKey);
 
@@ -32,16 +37,16 @@ class JWTService {
     }
 
     // Create the JWT using header, payload, and secret key
-    public static function createJWT(string $signKey, int $duration, string $payload): string {
+    public static function createJWT(string $signKey, int $duration, array $payloadData): string {
         // Create the header
         $header = [
             'alg' => 'HS256',
-            'typ' => 'JWT'
+            'typ' => 'JWT',
+            'iss' => 'my-auth-service'
         ];
 
         // Create the payload with expiration
         $exp = time() + $duration;
-        $payloadData = json_decode($payload, true); // Decode provided JSON payload
         $payloadData['exp'] = $exp;
 
         // Base64Url encode header and payload

@@ -1,6 +1,8 @@
 <?php 
 
 require_once BASE_DIR . 'controllers/BaseController.php';
+require_once BASE_DIR . 'repositories/MYSQLRepository.php';
+require_once BASE_DIR . 'services/TaskService/TaskService.php';
 
 class TaskController extends BaseController {
     protected static string $prefix = "tasks";
@@ -9,4 +11,8 @@ class TaskController extends BaseController {
     {
         echo "hello world";
     }
+
+    private static function getAllTasks(): void {
+
+    } 
 }

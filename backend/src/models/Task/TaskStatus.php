@@ -1,20 +1,19 @@
 <?php
 
-enum TaskStatus: string
+enum TaskStatus: int
 {
-    case PENDING = 'pending';
-    case IN_PROGRESS = 'in_progress';
-    case FINISHED = 'finished';
+    case PENDING = 1;
+    case IN_PROGRESS = 2;
+    case FINISHED = 3;
 
     // Method to convert a string to the corresponding TaskStatus
-    public static function fromString(string $status): TaskStatus
+    public static function fromString(int $statusCode): TaskStatus
     {
-        $status = strtolower($status);
-        return match ($status) {
-            'pending' => self::PENDING,
-            'in_progress' => self::IN_PROGRESS,
-            'finished' => self::FINISHED,
-            default => throw new InvalidArgumentException("Invalid status: $status"),
+        return match ($statusCode) {
+            1 => self::PENDING,
+            2 => self::IN_PROGRESS,
+            3 => self::FINISHED,
+            default => throw new InvalidArgumentException("Invalid status: $statusCode"),
         };
     }
 }
