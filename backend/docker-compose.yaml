@@ -36,7 +36,7 @@ services:
       context: ./nginx
     container_name: nginx
     ports:
-      - "80:80"
+      - "4000:80"
     depends_on:
       - php-fpm
     networks:

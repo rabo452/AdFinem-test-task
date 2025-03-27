@@ -1,5 +1,7 @@
 <?php
 
+header("Access-Control-Allow-Origin: *");
+
 // set the base directory for absolute imports
 define('BASE_DIR', __DIR__ . '/');
 

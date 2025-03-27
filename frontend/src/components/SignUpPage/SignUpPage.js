@@ -1,36 +1,35 @@
 // src/components/SignUpPage.js
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from "../../api/axiosInstance";
+import ApiStorage from "../../api/apiStorage";
 import "./SignUpPage.css";
 
 const SignUpPage = () => {
   // Local state for the form fields
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate(); // Correct placement of useNavigate hook
 
   // Handle input changes
-  const handleUsernameChange = (event) => {
+  const handleUsernameChange = event => {
     setUsername(event.target.value);
   };
 
-  const handlePasswordChange = (event) => {
+  const handlePasswordChange = event => {
     setPassword(event.target.value);
   };
 
   // Handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault(); // Prevent the default form submission
 
-    // Perform the sign-up action (this could be an API call or any logic you want)
-    console.log("Signing up with:", { username, password });
-
-    // Example API call (uncomment if you want to use axios):
-    // axios.post('/signup', { username, password })
-    //   .then(response => {
-    //     console.log('Signed up successfully', response);
-    //   })
-    //   .catch(error => {
-    //     console.log('Sign up failed', error);
-    //   });
+    axiosInstance.post('/auth/sign-up', { username, password })
+      .then(res => {
+        ApiStorage.jwt = res.data.jwt; // Set JWT to local storage
+        navigate('/'); // Use navigate to redirect after successful sign-up
+      })
+      .catch(res => alert(res['message'])) // Handle errors
   };
 
   return (

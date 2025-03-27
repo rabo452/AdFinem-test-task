@@ -37,4 +37,4 @@ INSERT INTO roles (id, title) VALUES
 -- Insert initial admin user
 INSERT INTO users (username, password, role_id)
 VALUES 
-    ('admin', SHA2('admin', 256), 1);  -- 1 refers to 'admin' role
+    ('administrator', SHA2('administrator', 256), 1);  -- 1 refers to 'admin' role
