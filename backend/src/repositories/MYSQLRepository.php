@@ -93,7 +93,8 @@ class MYSQLRepository implements TaskServiceRepositoryI, UserServiceRepositoryI 
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':title', $title);
         $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':status', $status->value);
+        $statusVal = (int) $status->value;
+        $stmt->bindParam(':status', $statusVal, PDO::PARAM_INT);
         $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
 
         $stmt->execute();
@@ -104,20 +105,22 @@ class MYSQLRepository implements TaskServiceRepositoryI, UserServiceRepositoryI 
 
     // Update task
     public function updateTask(int $taskId, ?string $title, ?string $description, ?TaskStatus $status): bool {
-        $query = "UPDATE tasks SET title = :title, description = :description, status = :status WHERE id = :task_id";
+        $query = 'UPDATE tasks SET';
+        $parameters = [
+            ...(isset($title) ? [[ 'key' => 'title', 'value' => $title]] : []),
+            ...(isset($description) ? [[ 'key' => 'description', 'value' => $description]] : []),
+            ...(isset($status) ? [[ 'key' => 'status', 'value' => $status->value]] : []),
+        ];
+
+        $updateSQL = implode(',', array_map(fn($param) => $param['key'] . " = :" . $param['key'], $parameters));
+        $query = "UPDATE tasks SET ". $updateSQL ." WHERE id = :task_id";
+
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(':task_id', $taskId, PDO::PARAM_INT);
 
-        if (isset($title)) {
-            $stmt->bindParam(':title', $title);
-        }
-
-        if (isset($description)) {
-            $stmt->bindParam(':description', $description);
-        }
-
-        if (isset($status)) {
-            $stmt->bindParam(':status', $status->value);
+        
+        foreach($parameters as $param) {
+            $stmt->bindParam(':' . $param['key'], $param['value']);
         }
 
         return (bool) $stmt->execute();

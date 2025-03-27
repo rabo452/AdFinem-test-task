@@ -10,7 +10,7 @@ class Task {
     private int $user_id;
 
     // Constructor (private so it can't be directly instantiated from outside)
-    private function __construct(int $id, string $title, string $description, TaskStatus $status, int $user_id) {
+    public function __construct(int $id, string $title, string $description, TaskStatus $status, int $user_id) {
         $this->id = $id;
         $this->title = $title;
         $this->description = $description;

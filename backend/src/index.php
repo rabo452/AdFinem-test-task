@@ -26,7 +26,7 @@ try {
         die("Page not found.");
     }
 } catch(Exception $e) {
-    if ($IS_DEV) {
+    if ((new Config())->isDev()) {
         throw $e;
     }
     http_response_code(500);

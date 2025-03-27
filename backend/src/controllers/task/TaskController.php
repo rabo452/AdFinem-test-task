@@ -18,13 +18,13 @@ class TaskController extends BaseController {
 
         // check for JWT 
         // if it is not presented, then give an error message
-        if (empty($authHeader = $_SERVER['Authorization'] ?? '') 
+        if (empty($authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '') 
             || empty($jwt = str_replace([' ', 'Bearer'], '', $authHeader)) 
             || !JWTService::isValidJWT($JWTsignKey, $jwt) 
             || empty($payload = JWTService::getJWTPayload($JWTsignKey, $jwt))
             || empty($userId = (int) $payload['user_id'])) 
         {
-            static::sendJsonResponse(['message' => 'not authorized', 403]);
+            static::sendJsonResponse(['message' => 'not authorized'], 403);
         }
 
         // Check if the path is empty, meaning list all tasks
@@ -36,7 +36,7 @@ class TaskController extends BaseController {
             } else {
                 static::sendJsonResponse(['message' => 'Unable to find the page.'], 404);
             }
-        } else if ($path = str_replace([' ', '/'], '', $path) && is_numeric($path) && ctype_digit($path)) {
+        } else if (($path = str_replace([' ', '/'], '', $path)) && is_numeric($path) && ctype_digit($path)) {
             $taskId = (int) $path;
             // Path refers to a specific task
             if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -57,7 +57,12 @@ class TaskController extends BaseController {
         // Get POST data for the task
         $title = $_POST['title'] ?? '';
         $description = $_POST['description'] ?? '';
-        $taskStatus = TaskStatus::fromString((int) ($_POST['status'] ?? '1')); 
+        try {
+            $taskStatus = TaskStatus::fromString((int) ($_POST['status'] ?? '1')); 
+        } catch (Exception $e) {
+            static::sendJsonResponse(['message' => 'invalid task status'], 400);
+        }
+        
 
         if (empty($title)) {
             static::sendJsonResponse(['message' => 'Missing required fields.'], 400);
@@ -121,11 +126,14 @@ class TaskController extends BaseController {
         $description = $PUT_VARS['description'] ?? null;
         $taskStatus = $PUT_VARS['status'] ?? null;
 
-        if (empty($title) && empty($description) && empty($status)) {
+        if ((empty($title)) && empty($description) && empty($status)) {
             static::sendJsonResponse(['message' => 'Invalid request'], 400);
         }
-
-        $taskStatus = $taskStatus ? TaskStatus::fromString((int) $taskStatus) : null;
+        try {
+            $taskStatus = $taskStatus ? TaskStatus::fromString((int) $taskStatus) : null;
+        } catch (Exception $e) {
+            static::sendJsonResponse(['message' => 'invalid task status'], 400);
+        }
 
         // Instantiate required classes and call service method
         $pdo = (new PDO_CONNECTION())->getPDO();
@@ -150,7 +158,7 @@ class TaskController extends BaseController {
         $isTaskDeleted = false;
 
         try {
-            $isTaskDeleted = $taskService->deleteTask((int)$userId, (int)$taskId);
+            $isTaskDeleted = $taskService->deleteTask($userId, $taskId);
         } catch (Exception $e) {
             static::sendJsonResponse(['message' => 'Error deleting task.'], 500);
         }
