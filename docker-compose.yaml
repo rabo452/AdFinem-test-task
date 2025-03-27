@@ -1,7 +1,7 @@
 services:
   mysql:
     build:
-      context: ./mysql  # Path to your custom MySQL Dockerfile
+      context: ./backend/mysql  # Path to your custom MySQL Dockerfile
     container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: examplepassword
@@ -15,10 +15,10 @@ services:
 
   php-fpm:
     build:
-      context: ./php-fpm
+      context: ./backend/php-fpm
     container_name: php-fpm
     volumes:
-      - ./src:/var/www/html
+      - ./backend/src:/var/www/html
     networks:
       - app-network
     environment:
@@ -33,7 +33,7 @@ services:
 
   nginx:
     build:
-      context: ./nginx
+      context: ./backend/nginx
     container_name: nginx
     ports:
       - "4000:80"
@@ -41,6 +41,14 @@ services:
       - php-fpm
     networks:
       - app-network
+  
+  front-end-nginx:
+    image: nginx:latest
+    container_name: front-end-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/build/:/usr/share/nginx/html/
 
 networks:
   app-network:
